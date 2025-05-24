@@ -2,7 +2,7 @@
 A mini social media platform to improve my Java/Spring Boot/React
 
 ## Project Description
-This project aims to implement a mini social media platform that allows friends and family to connect to each other, similar to Facebook. This project is also to help me practice my fullstack development and to help me continue my Spring learning. I also wish to learn to use PostgreSQL.
+This project aims to implement a mini social media platform that allows friends and family to connect to each other, similar to Facebook. This project is also to help me practice my fullstack development and to help me continue my Spring learning.
 
 ### Tools Used:
 1. Visual Studio Code
