@@ -1,12 +1,40 @@
 package michlam.mini_social_platform.controller;
 
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RestController;
+import michlam.mini_social_platform.dto.UserDto;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @AllArgsConstructor
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
+@RequestMapping("/api/users")
 public class UserController {
     private UserService userService;
+    private JwtService jwtService;
+
+    // TODO: CreateUser REST API
+    @PostMapping
+    public ResponseEntity<Object> createUser(@RequestBody UserDto userDto) {
+        return null;
+    }
+
+    // TODO: GetUsers REST API
+    @GetMapping
+    public ResponseEntity<Object> getUsers() {
+        return null;
+    }
+
+    // TODO: GetUser REST API
+    @GetMapping("{id}")
+    public ResponseEntity<Object> getUser(@PathVariable Long userId) {
+        return null;
+    }
+
+    // TODO: UpdateUser REST API
+    @PutMapping("{id}")
+    public ResponseEntity<Object> updateUser(@PathVariable Long userId, @RequestBody UserDto userDto) {
+        return null;
+    }
+
 }
