@@ -23,7 +23,6 @@ public class UserController {
     private UserService userService;
     private JwtService jwtService;
 
-    // TODO: CreateUser REST API
     @PostMapping
     public ResponseEntity<Object> createUser(@RequestBody UserDto userDto) {
         try {
