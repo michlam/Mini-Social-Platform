@@ -23,7 +23,7 @@ public class UserController {
     private UserService userService;
     private JwtService jwtService;
 
-    @PostMapping
+    @PostMapping("create")
     public ResponseEntity<Object> createUser(@RequestBody UserDto userDto) {
         try {
             UserDto savedUserDto = userService.createUser(userDto);
