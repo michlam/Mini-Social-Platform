@@ -40,7 +40,6 @@ public class UserController {
         return null;
     }
 
-
     // TODO: GetProfilePicture REST API
     @GetMapping("{id}/pfp")
     public ResponseEntity<Object> getProfilePicture(@PathVariable Long userId) {
