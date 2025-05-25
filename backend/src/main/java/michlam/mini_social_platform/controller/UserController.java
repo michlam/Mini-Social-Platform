@@ -1,6 +1,7 @@
 package michlam.mini_social_platform.controller;
 
 import lombok.AllArgsConstructor;
+import michlam.mini_social_platform.config.JwtService;
 import michlam.mini_social_platform.dto.UserDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
