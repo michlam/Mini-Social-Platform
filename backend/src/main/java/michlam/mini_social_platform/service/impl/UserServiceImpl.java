@@ -12,6 +12,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -35,8 +38,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto getUsers() {
-        return null;
+    public List<Long> getUserIds() {
+        List<User> users = userRepository.findAll();
+        List<Long> userIds = new ArrayList<>();
+
+        for (User user : users) {
+            userIds.add(user.getId());
+        }
+
+        return userIds;
     }
 
     @Override

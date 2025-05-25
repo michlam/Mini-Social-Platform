@@ -1,5 +1,6 @@
 package michlam.mini_social_platform;
 
+import io.jsonwebtoken.lang.Assert;
 import michlam.mini_social_platform.controller.UserController;
 import michlam.mini_social_platform.dto.UserDto;
 import michlam.mini_social_platform.exception.DuplicateResourceException;
@@ -11,6 +12,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.List;
 
 @SpringBootTest
 public class UserServiceTest {
@@ -52,6 +55,25 @@ public class UserServiceTest {
 
         userService.createUser(first);
         Assertions.assertThrows(DuplicateResourceException.class, () -> userService.createUser(second));
+    }
+
+    @Test
+    void testGetUserIds_Success() {
+        UserDto first = new UserDto();
+        first.setUsername("test.user.1");
+        first.setPassword("1234");
+
+        UserDto second = new UserDto();
+        second.setUsername("test.user.2");
+        second.setPassword("2345");
+
+        Long firstId = userService.createUser(first).getId();
+        Long secondId = userService.createUser(second).getId();
+
+        List<Long> userIds = userService.getUserIds();
+        Assertions.assertTrue(userIds.contains(firstId));
+        Assertions.assertTrue(userIds.contains(secondId));
+        Assertions.assertFalse(userIds.contains(secondId + 100L));
     }
 
     @Test

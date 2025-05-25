@@ -15,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @AllArgsConstructor
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -43,10 +45,11 @@ public class UserController {
         }
     }
 
-    // TODO: GetUsers REST API
+
     @GetMapping
-    public ResponseEntity<Object> getUsers() {
-        return null;
+    public ResponseEntity<Object> getUserIds() {
+        List<Long> userIds = userService.getUserIds();
+        return ResponseEntity.ok(userIds);
     }
 
     // TODO: GetUser REST API
