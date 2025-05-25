@@ -1,8 +1,12 @@
 package michlam.mini_social_platform.service.impl;
 
+import lombok.AllArgsConstructor;
 import michlam.mini_social_platform.dto.UserDto;
 import michlam.mini_social_platform.service.UserService;
+import org.springframework.stereotype.Service;
 
+@Service
+@AllArgsConstructor
 public class UserServiceImpl implements UserService {
     @Override
     public UserDto createUser(UserDto userDto) {
