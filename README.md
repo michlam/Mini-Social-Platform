@@ -2,7 +2,7 @@
 A mini social media platform to improve my Java/Spring Boot/React
 
 ## Project Description
-This project aims to implement a mini social media platform that allows friends and family to connect to each other, similar to Facebook. This project is also to help me practice my fullstack development and to help me continue my Spring learning. I also wish to learn to use PostgreSQL.
+This project aims to implement a mini social media platform that allows friends and family to connect to each other, similar to Facebook. This project is also to help me practice my fullstack development and to help me continue my Spring learning.
 
 ### Tools Used:
 1. Visual Studio Code
@@ -11,7 +11,7 @@ This project aims to implement a mini social media platform that allows friends 
 
 # Development Logs
 
-### Phase 1 - Started 5/24/25
+### Phase 1
 For the first phase, I plan to use my past experiences to quickly implement user functionality, testing, security, and a frontend. The following list summarizes the phase 1 planned features:
 - Users can create, login to, and logout of their accounts.
 - Users can login with JWT web tokens, with passwords encrypted in the database.
@@ -23,3 +23,4 @@ For the first phase, I plan to use my past experiences to quickly implement user
 <br/>
 
 # Attributions
+- <a target="_blank" href="https://icons8.com/icon/12438/customer">Avatar</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>

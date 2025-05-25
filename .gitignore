@@ -1,0 +1,5 @@
+backend/src/main/resources/application.properties
+
+# Local Netlify folder
+.netlify
+/backend/src/main/resources/static/images
