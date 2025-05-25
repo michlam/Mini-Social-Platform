@@ -6,6 +6,7 @@ import michlam.mini_social_platform.dto.UserDto;
 import michlam.mini_social_platform.entity.User;
 import michlam.mini_social_platform.exception.DuplicateResourceException;
 import michlam.mini_social_platform.exception.ErrorResponse;
+import michlam.mini_social_platform.exception.ResourceNotFoundException;
 import michlam.mini_social_platform.mapper.Mapper;
 import michlam.mini_social_platform.service.UserService;
 import org.apache.coyote.Response;
@@ -45,33 +46,38 @@ public class UserController {
         }
     }
 
-
     @GetMapping
     public ResponseEntity<Object> getUserIds() {
         List<Long> userIds = userService.getUserIds();
         return ResponseEntity.ok(userIds);
     }
 
-    // TODO: GetUser REST API
-    @GetMapping("{id}")
+    @GetMapping("{userId}")
     public ResponseEntity<Object> getUser(@PathVariable Long userId) {
-        return null;
+        try {
+            UserDto userDto = userService.getUser(userId);
+            return ResponseEntity.ok(userDto);
+
+        } catch (ResourceNotFoundException e) {
+            ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
     }
 
     // TODO: UpdateUser REST API
-    @PutMapping("{id}")
+    @PutMapping("{userId}")
     public ResponseEntity<Object> updateUser(@PathVariable Long userId, @RequestBody UserDto userDto) {
         return null;
     }
 
     // TODO: GetProfilePicture REST API
-    @GetMapping("{id}/pfp")
+    @GetMapping("{userId}/pfp")
     public ResponseEntity<Object> getProfilePicture(@PathVariable Long userId) {
         return null;
     }
 
     // TODO: UpdateProfilePicture REST API
-    @PutMapping("{id}/pfp")
+    @PutMapping("{userId}/pfp")
     public ResponseEntity<Object> updateProfilePicture(
             @PathVariable Long userId,
             @RequestParam("pfp") MultipartFile pfp

@@ -51,7 +51,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getUser(Long userId) {
-        return null;
+        User user = userRepository.findById(userId).orElseThrow(() ->
+                new ResourceNotFoundException("User does not exist with the given id: " + userId));
+
+        user.setPassword(null);
+        return Mapper.mapToUserDto(user);
     }
 
     @Override
