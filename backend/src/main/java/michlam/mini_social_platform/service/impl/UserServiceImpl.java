@@ -26,9 +26,10 @@ public class UserServiceImpl implements UserService {
             throw new DuplicateResourceException("Username is already taken");
         }
 
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        User savedUser = userRepository.save(user);
+
         //  TODO: Create the user's profile in the future
-        System.out.println("User Id: " + user.getId());
-        System.out.println("Saved User Id: " + savedUser.getId());
         savedUser.setPassword(userDto.getPassword());
         return Mapper.mapToUserDto(savedUser);
     }
