@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import michlam.mini_social_platform.dto.UserDto;
 import michlam.mini_social_platform.entity.User;
 import michlam.mini_social_platform.exception.DuplicateResourceException;
+import michlam.mini_social_platform.exception.ResourceNotFoundException;
 import michlam.mini_social_platform.mapper.Mapper;
 import michlam.mini_social_platform.respository.UserRepository;
 import michlam.mini_social_platform.service.UserService;
@@ -24,9 +25,6 @@ public class UserServiceImpl implements UserService {
         if (userRepository.findByUsername(user.getUsername()).isPresent()) {
             throw new DuplicateResourceException("Username is already taken");
         }
-
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        User savedUser = userRepository.save(user);
 
         //  TODO: Create the user's profile in the future
         System.out.println("User Id: " + user.getId());
@@ -52,7 +50,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Long getIdByUsername(String username) {
-        return 0L;
+        User user = userRepository.findByUsername(username).orElseThrow(() ->
+                new ResourceNotFoundException("User does not exist with the given username: " + username));
+
+        return user.getId();
     }
 
     @Override
