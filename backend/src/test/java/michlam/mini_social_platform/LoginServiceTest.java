@@ -1,9 +1,11 @@
 package michlam.mini_social_platform;
 
 import michlam.mini_social_platform.controller.LoginController;
+import michlam.mini_social_platform.dto.UserDto;
 import michlam.mini_social_platform.exception.ResourceNotFoundException;
 import michlam.mini_social_platform.respository.UserRepository;
 import michlam.mini_social_platform.service.LoginService;
+import michlam.mini_social_platform.service.UserService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,6 +19,9 @@ public class LoginServiceTest {
 
     @Autowired
     private LoginService loginService;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private UserRepository userRepository;
@@ -33,18 +38,22 @@ public class LoginServiceTest {
 
     @Test
     void testLogin_BasicSuccess() {
-        String username = "test.user";
-        String password = "1234";
+        UserDto userDto = new UserDto();
+        userDto.setUsername("test.user.1");
+        userDto.setPassword("1234");
+        userService.createUser(userDto);
 
-        Assertions.assertTrue(loginService.login(username, password));
+        Assertions.assertTrue(loginService.login(userDto.getUsername(), userDto.getPassword()));
     }
 
     @Test
     void testLogin_IncorrectPassword() {
-        String username = "test.user";
-        String password = "1235";
+        UserDto userDto = new UserDto();
+        userDto.setUsername("test.user.1");
+        userDto.setPassword("1234");
+        userService.createUser(userDto);
 
-        Assertions.assertFalse(loginService.login(username, password));
+        Assertions.assertFalse(loginService.login(userDto.getUsername(), "1235"));
     }
 
     @Test
