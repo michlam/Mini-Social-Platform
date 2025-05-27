@@ -63,11 +63,22 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
-
-    // TODO: UpdateUser REST API
+    
     @PutMapping("{userId}")
-    public ResponseEntity<Object> updateUser(@PathVariable Long userId, @RequestBody UserDto userDto) {
-        return null;
+    public ResponseEntity<Object> updateUser(@PathVariable Long userId, @RequestBody UserDto updatedUser) {
+        try {
+            UserDto userDto = userService.updateUser(updatedUser);
+            return ResponseEntity.ok(userDto);
+
+        } catch (ResourceNotFoundException e) {
+            ErrorResponse response = new ErrorResponse(HttpStatus.NOT_FOUND.value(), e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+
+        } catch (DuplicateResourceException e) {
+            ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+
+        }
     }
 
     // TODO: GetProfilePicture REST API
