@@ -11,11 +11,15 @@ import michlam.mini_social_platform.mapper.Mapper;
 import michlam.mini_social_platform.service.UserService;
 import org.apache.coyote.Response;
 import org.springframework.boot.autoconfigure.graphql.GraphQlProperties;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.file.Files;
 import java.util.List;
 
 @AllArgsConstructor
@@ -64,16 +68,42 @@ public class UserController {
         }
     }
 
-    // TODO: UpdateUser REST API
     @PutMapping("{userId}")
-    public ResponseEntity<Object> updateUser(@PathVariable Long userId, @RequestBody UserDto userDto) {
-        return null;
+    public ResponseEntity<Object> updateUser(@PathVariable Long userId, @RequestBody UserDto updatedUser) {
+        try {
+            UserDto userDto = userService.updateUser(updatedUser);
+            return ResponseEntity.ok(userDto);
+
+        } catch (ResourceNotFoundException e) {
+            ErrorResponse response = new ErrorResponse(HttpStatus.NOT_FOUND.value(), e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+
+        } catch (DuplicateResourceException e) {
+            ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+
+        }
     }
 
-    // TODO: GetProfilePicture REST API
     @GetMapping("{userId}/pfp")
     public ResponseEntity<Object> getProfilePicture(@PathVariable Long userId) {
-        return null;
+        try {
+            Resource profilePicture = userService.getProfilePicture(userId);
+            String contentType = "image/jpeg";
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(contentType))
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + profilePicture.getFilename() + "\"")
+                    .body(profilePicture);
+
+        } catch (ResourceNotFoundException e) {
+            ErrorResponse response = new ErrorResponse(HttpStatus.NOT_FOUND.value(), e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+
+        } catch (RuntimeException e) {
+            ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
     }
 
     // TODO: UpdateProfilePicture REST API

@@ -8,10 +8,17 @@ import michlam.mini_social_platform.exception.ResourceNotFoundException;
 import michlam.mini_social_platform.mapper.Mapper;
 import michlam.mini_social_platform.respository.UserRepository;
 import michlam.mini_social_platform.service.UserService;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +27,10 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
     private PasswordEncoder passwordEncoder;
+    private final Path PROFILE_PICTURE_DIRECTORY = Paths.get(
+            "src/main/resources/static/images")
+            .toAbsolutePath()
+            .normalize();
 
     @Override
     public UserDto createUser(UserDto userDto) {
@@ -60,7 +71,22 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto updateUser(UserDto updatedUser) {
-        return null;
+        User user = userRepository.findById(updatedUser.getId()).orElseThrow(() ->
+                new ResourceNotFoundException("User does not exist with the given id: " + updatedUser.getId()));
+
+        // Check that we aren't changing the username to something that is taken.
+        userRepository.findByUsername(updatedUser.getUsername()).ifPresent(checkUser -> {
+            if (!checkUser.getId().equals(updatedUser.getId())) {
+                throw new DuplicateResourceException("User with this username is already taken.");
+            }
+        });
+
+        user.setUsername(updatedUser.getUsername());
+        user.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
+
+        User updatedUserObj = userRepository.save(user);
+        updatedUserObj.setPassword(updatedUser.getPassword());
+        return Mapper.mapToUserDto(updatedUserObj);
     }
 
     @Override
@@ -72,12 +98,42 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public MultipartFile getProfilePicture(Long userId) {
-        return null;
+    public Resource getProfilePicture(Long userId) {
+        // Check the images folder.
+        // If userId-pfp.jpg exists, return that.
+        // If not, return default-pfp.jpg for now.
+        // Accept both jpg and png. Convert to jpg server side and get optimized resolutions.
+        userRepository.findById(userId).orElseThrow(() ->
+                new ResourceNotFoundException("User does not exist with the given id: " + userId));
+
+        try {
+            String fileName = String.valueOf(userId) + "-pfp.jpg";
+            Path filePath = this.PROFILE_PICTURE_DIRECTORY.resolve(fileName).normalize();
+            Resource resource = new UrlResource(filePath.toUri());
+
+            // If the image exists, return it
+            if (resource.exists()) {
+                return resource;
+            }
+
+            // Else, return the default image
+            fileName = "default-pfp.jpg";
+            filePath = this.PROFILE_PICTURE_DIRECTORY.resolve(fileName).normalize();
+            return new UrlResource(filePath.toUri());
+
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Malformed URL encountered when getting profile picture");
+        }
     }
 
     @Override
-    public String updateProfilePicture(Long userId, MultipartFile pfp) {
-        return null;
+    public void updateProfilePicture(Long userId, MultipartFile pfp) {
+        // Check if userId exists
+        // Do we need to do some preprocessing?
+        //  Convert image to JPEG.
+        //  Convert image resolution. 400 by 400 should be good.
+        // If custom pfp already exists, then just update it.
+        // If
+        return;
     }
 }
