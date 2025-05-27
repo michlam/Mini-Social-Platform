@@ -12,11 +12,14 @@ import michlam.mini_social_platform.service.UserService;
 import org.apache.coyote.Response;
 import org.springframework.boot.autoconfigure.graphql.GraphQlProperties;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.file.Files;
 import java.util.List;
 
 @AllArgsConstructor
@@ -87,7 +90,12 @@ public class UserController {
     public ResponseEntity<Object> getProfilePicture(@PathVariable Long userId) {
         try {
             Resource profilePicture = userService.getProfilePicture(userId);
-            return ResponseEntity.ok(profilePicture);
+            String contentType = "image/png";
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(contentType))
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + profilePicture.getFilename() + "\"")
+                    .body(profilePicture);
 
         } catch (ResourceNotFoundException e) {
             ErrorResponse response = new ErrorResponse(HttpStatus.NOT_FOUND.value(), e.getMessage());
