@@ -12,8 +12,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.net.MalformedURLException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 @SpringBootTest
@@ -26,6 +31,11 @@ public class UserServiceTest {
 
     @Autowired
     private UserRepository userRepository;
+
+    private final Path PROFILE_PICTURE_DIRECTORY = Paths.get(
+                    "src/main/resources/static/images")
+            .toAbsolutePath()
+            .normalize();
 
     @BeforeEach
     void setup() {
@@ -134,9 +144,23 @@ public class UserServiceTest {
     }
 
     @Test
-    void testGetProfilePicture_Success_Default() {
-        MultipartFile result = userService.getProfilePicture(45L);
-        Assertions.assertNotNull(result);
+    void testGetProfilePicture_Success_Default() throws MalformedURLException {
+        UserDto userDto = new UserDto();
+        userDto.setUsername("test.user.1");
+        userDto.setPassword("1234");
+        Long userId = userService.createUser(userDto).getId();
+
+        Resource result = userService.getProfilePicture(userId);
+        String fileName = "default-pfp.png";
+        Path filePath = PROFILE_PICTURE_DIRECTORY.resolve(fileName).normalize();
+        Resource defaultResource = new UrlResource(filePath.toUri());
+
+        Assertions.assertEquals(defaultResource, result);
+    }
+
+    @Test
+    void testGetProfilePicture_Failure_UserDoesNotExist() {
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> userService.getProfilePicture(-1L));
     }
 
 

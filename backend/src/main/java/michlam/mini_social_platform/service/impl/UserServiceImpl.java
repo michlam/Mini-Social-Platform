@@ -26,7 +26,7 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
     private PasswordEncoder passwordEncoder;
     private final Path PROFILE_PICTURE_DIRECTORY = Paths.get(
-            "../../../../../../src/main/resources/static/images")
+            "src/main/resources/static/images")
             .toAbsolutePath()
             .normalize();
 
@@ -101,6 +101,9 @@ public class UserServiceImpl implements UserService {
         // Get a list of all the image names. If there are any that contain userId-pfp.png, return that.
         // If not, return default-pfp.png for now.
         // Only handle png for now.
+        User user = userRepository.findById(userId).orElseThrow(() ->
+                new ResourceNotFoundException("User does not exist with the given id: " + userId));
+
         try {
             String fileName = String.valueOf(userId) + "-pfp.png";
             Path filePath = this.PROFILE_PICTURE_DIRECTORY.resolve(fileName).normalize();
@@ -112,15 +115,13 @@ public class UserServiceImpl implements UserService {
             }
 
             // Else, return the default image
+            fileName = "default-pfp.png";
+            filePath = this.PROFILE_PICTURE_DIRECTORY.resolve(fileName).normalize();
+            return new UrlResource(filePath.toUri());
 
         } catch (MalformedURLException e) {
-
+            throw new RuntimeException("Malformed URL encountered when getting profile picture");
         }
-
-
-        System.out.println(PROFILE_PICTURE_DIRECTORY);
-        System.out.println(filePath);
-        return null;
     }
 
     @Override

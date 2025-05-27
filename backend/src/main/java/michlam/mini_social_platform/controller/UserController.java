@@ -93,6 +93,9 @@ public class UserController {
             ErrorResponse response = new ErrorResponse(HttpStatus.NOT_FOUND.value(), e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
 
+        } catch (RuntimeException e) {
+            ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
 
