@@ -11,6 +11,7 @@ import michlam.mini_social_platform.mapper.Mapper;
 import michlam.mini_social_platform.service.UserService;
 import org.apache.coyote.Response;
 import org.springframework.boot.autoconfigure.graphql.GraphQlProperties;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -85,7 +86,7 @@ public class UserController {
     @GetMapping("{userId}/pfp")
     public ResponseEntity<Object> getProfilePicture(@PathVariable Long userId) {
         try {
-            MultipartFile profilePicture = userService.getProfilePicture(userId);
+            Resource profilePicture = userService.getProfilePicture(userId);
             return ResponseEntity.ok(profilePicture);
 
         } catch (ResourceNotFoundException e) {

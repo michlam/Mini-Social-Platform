@@ -8,10 +8,13 @@ import michlam.mini_social_platform.exception.ResourceNotFoundException;
 import michlam.mini_social_platform.mapper.Mapper;
 import michlam.mini_social_platform.respository.UserRepository;
 import michlam.mini_social_platform.service.UserService;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -93,13 +96,30 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public MultipartFile getProfilePicture(Long userId) {
+    public Resource getProfilePicture(Long userId) {
         // Check the images folder.
         // Get a list of all the image names. If there are any that contain userId-pfp.png, return that.
         // If not, return default-pfp.png for now.
         // Only handle png for now.
+        try {
+            String fileName = String.valueOf(userId) + "-pfp.png";
+            Path filePath = this.PROFILE_PICTURE_DIRECTORY.resolve(fileName).normalize();
+            Resource resource = new UrlResource(filePath.toUri());
+
+            // If the image exists, return it
+            if (resource.exists()) {
+                return resource;
+            }
+
+            // Else, return the default image
+
+        } catch (MalformedURLException e) {
+
+        }
+
 
         System.out.println(PROFILE_PICTURE_DIRECTORY);
+        System.out.println(filePath);
         return null;
     }
 
