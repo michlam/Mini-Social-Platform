@@ -151,7 +151,7 @@ public class UserServiceTest {
         Long userId = userService.createUser(userDto).getId();
 
         Resource result = userService.getProfilePicture(userId);
-        String fileName = "default-pfp.png";
+        String fileName = "default-pfp.jpg";
         Path filePath = PROFILE_PICTURE_DIRECTORY.resolve(fileName).normalize();
         Resource defaultResource = new UrlResource(filePath.toUri());
 
@@ -161,6 +161,15 @@ public class UserServiceTest {
     @Test
     void testGetProfilePicture_Failure_UserDoesNotExist() {
         Assertions.assertThrows(ResourceNotFoundException.class, () -> userService.getProfilePicture(-1L));
+    }
+
+    // TODO:
+    @Test
+    void testUpdateProfilePicture_Success() {
+//        UserDto userDto = new UserDto();
+//        userDto.setUsername("test.user.1");
+//        userDto.setPassword("1234");
+//        Long userId = userService.createUser(userDto).getId();
     }
 
 

@@ -85,12 +85,11 @@ public class UserController {
         }
     }
 
-    // TODO: GetProfilePicture REST API
     @GetMapping("{userId}/pfp")
     public ResponseEntity<Object> getProfilePicture(@PathVariable Long userId) {
         try {
             Resource profilePicture = userService.getProfilePicture(userId);
-            String contentType = "image/png";
+            String contentType = "image/jpeg";
 
             return ResponseEntity.ok()
                     .contentType(MediaType.parseMediaType(contentType))

@@ -100,16 +100,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public Resource getProfilePicture(Long userId) {
         // Check the images folder.
-        // Get a list of all the image names. If there are any that contain userId-pfp.png, return that.
-        // If not, return default-pfp.png for now.
-        // Only handle png for now.
+        // If userId-pfp.jpg exists, return that.
+        // If not, return default-pfp.jpg for now.
+        // Accept both jpg and png. Convert to jpg server side and get optimized resolutions.
         userRepository.findById(userId).orElseThrow(() ->
                 new ResourceNotFoundException("User does not exist with the given id: " + userId));
 
         try {
-            String fileName = String.valueOf(userId) + "-pfp.png";
+            String fileName = String.valueOf(userId) + "-pfp.jpg";
             Path filePath = this.PROFILE_PICTURE_DIRECTORY.resolve(fileName).normalize();
-
             Resource resource = new UrlResource(filePath.toUri());
 
             // If the image exists, return it
@@ -118,7 +117,7 @@ public class UserServiceImpl implements UserService {
             }
 
             // Else, return the default image
-            fileName = "default-pfp.png";
+            fileName = "default-pfp.jpg";
             filePath = this.PROFILE_PICTURE_DIRECTORY.resolve(fileName).normalize();
             return new UrlResource(filePath.toUri());
 
@@ -128,7 +127,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String updateProfilePicture(Long userId, MultipartFile pfp) {
-        return null;
+    public void updateProfilePicture(Long userId, MultipartFile pfp) {
+        // Check if userId exists
+        // Do we need to do some preprocessing?
+        //  Convert image to JPEG.
+        //  Convert image resolution. 400 by 400 should be good.
+        // If custom pfp already exists, then just update it.
+        // If
+        return;
     }
 }

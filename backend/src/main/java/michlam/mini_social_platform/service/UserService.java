@@ -14,6 +14,6 @@ public interface UserService {
 
     Long getIdByUsername(String username);
     Resource getProfilePicture(Long userId);
-    String updateProfilePicture(Long userId, MultipartFile pfp);
+    void updateProfilePicture(Long userId, MultipartFile pfp);
 
 }
