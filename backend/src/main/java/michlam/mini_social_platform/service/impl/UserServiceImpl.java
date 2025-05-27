@@ -12,6 +12,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +22,10 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
     private PasswordEncoder passwordEncoder;
+    private final Path PROFILE_PICTURE_DIRECTORY = Paths.get(
+            "../../../../../../src/main/resources/static/images")
+            .toAbsolutePath()
+            .normalize();
 
     @Override
     public UserDto createUser(UserDto userDto) {
@@ -88,6 +94,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public MultipartFile getProfilePicture(Long userId) {
+        // Check the images folder.
+        // Get a list of all the image names. If there are any that contain userId-pfp.png, return that.
+        // If not, return default-pfp.png for now.
+        // Only handle png for now.
+
+        System.out.println(PROFILE_PICTURE_DIRECTORY);
         return null;
     }
 

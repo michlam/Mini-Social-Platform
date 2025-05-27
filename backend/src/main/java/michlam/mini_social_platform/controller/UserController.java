@@ -84,7 +84,15 @@ public class UserController {
     // TODO: GetProfilePicture REST API
     @GetMapping("{userId}/pfp")
     public ResponseEntity<Object> getProfilePicture(@PathVariable Long userId) {
-        return null;
+        try {
+            MultipartFile profilePicture = userService.getProfilePicture(userId);
+            return ResponseEntity.ok(profilePicture);
+
+        } catch (ResourceNotFoundException e) {
+            ErrorResponse response = new ErrorResponse(HttpStatus.NOT_FOUND.value(), e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+
+        }
     }
 
     // TODO: UpdateProfilePicture REST API
