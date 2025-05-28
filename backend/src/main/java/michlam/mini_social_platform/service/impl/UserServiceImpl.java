@@ -128,7 +128,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateProfilePicture(Long userId, MultipartFile pfp) {
+    public Resource updateProfilePicture(Long userId, MultipartFile pfp) {
         final int PFP_SIZE = 400;
         final float JPEG_QUALITY = 1.0f;
 
@@ -154,16 +154,11 @@ public class UserServiceImpl implements UserService {
                     .outputQuality(JPEG_QUALITY)
                     .toFile(filePath.toFile());
 
+            return getProfilePicture(userId);
         } catch (IOException e) {
             throw new RuntimeException("Could not read profile picture image from provided file");
         }
     }
-
-    // Do we need to do some preprocessing?
-    //  Convert image to JPEG.
-    //  Convert image resolution. 400 by 400 should be good.
-    // If custom pfp already exists, then just update it.
-
 
     @Override
     public void deleteUser(Long userId) {
