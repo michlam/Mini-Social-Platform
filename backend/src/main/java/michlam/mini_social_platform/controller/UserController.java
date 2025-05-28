@@ -106,13 +106,25 @@ public class UserController {
         }
     }
 
-    // TODO: UpdateProfilePicture REST API
+
     @PutMapping("{userId}/pfp")
     public ResponseEntity<Object> updateProfilePicture(
             @PathVariable Long userId,
             @RequestParam("pfp") MultipartFile pfp
     ) {
-        return null;
+        try {
+            Resource profilePicture = userService.updateProfilePicture(userId, pfp);
+            String contentType = "image/jpeg";
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(contentType))
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + profilePicture.getFilename() + "\"")
+                    .body(profilePicture);
+
+        } catch (RuntimeException e) {
+            ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
     }
 
 

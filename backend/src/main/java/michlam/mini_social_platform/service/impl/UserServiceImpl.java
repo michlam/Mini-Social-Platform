@@ -8,12 +8,17 @@ import michlam.mini_social_platform.exception.ResourceNotFoundException;
 import michlam.mini_social_platform.mapper.Mapper;
 import michlam.mini_social_platform.respository.UserRepository;
 import michlam.mini_social_platform.service.UserService;
+import net.coobird.thumbnailator.Thumbnails;
+import net.coobird.thumbnailator.geometry.Positions;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
@@ -99,15 +104,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Resource getProfilePicture(Long userId) {
-        // Check the images folder.
-        // If userId-pfp.jpg exists, return that.
-        // If not, return default-pfp.jpg for now.
-        // Accept both jpg and png. Convert to jpg server side and get optimized resolutions.
         userRepository.findById(userId).orElseThrow(() ->
                 new ResourceNotFoundException("User does not exist with the given id: " + userId));
 
         try {
-            String fileName = String.valueOf(userId) + "-pfp.jpg";
+            String fileName = getProfileImageName(userId);
             Path filePath = this.PROFILE_PICTURE_DIRECTORY.resolve(fileName).normalize();
             Resource resource = new UrlResource(filePath.toUri());
 
@@ -127,13 +128,56 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateProfilePicture(Long userId, MultipartFile pfp) {
-        // Check if userId exists
-        // Do we need to do some preprocessing?
-        //  Convert image to JPEG.
-        //  Convert image resolution. 400 by 400 should be good.
-        // If custom pfp already exists, then just update it.
-        // If
-        return;
+    public Resource updateProfilePicture(Long userId, MultipartFile pfp) {
+        final int PFP_SIZE = 400;
+        final float JPEG_QUALITY = 1.0f;
+
+        userRepository.findById(userId).orElseThrow(() ->
+                new ResourceNotFoundException("User does not exist with the given id: " + userId));
+
+        if (pfp.isEmpty()) throw new IllegalArgumentException("Profile picture file is empty");
+
+        try {
+            BufferedImage originalImage = ImageIO.read(new ByteArrayInputStream(pfp.getBytes()));
+            String fileName = getProfileImageName(userId);
+            Path filePath = this.PROFILE_PICTURE_DIRECTORY.resolve(fileName).normalize();
+            int squareSize = Math.min(originalImage.getWidth(), originalImage.getHeight());
+
+            Thumbnails.of(originalImage)
+                    .crop(Positions.CENTER)
+                    .size(squareSize, squareSize)
+                    .toFile(filePath.toFile());
+
+            Thumbnails.of(filePath.toFile())
+                    .size(PFP_SIZE, PFP_SIZE)
+                    .outputFormat("jpg")
+                    .outputQuality(JPEG_QUALITY)
+                    .toFile(filePath.toFile());
+
+            return getProfilePicture(userId);
+        } catch (IOException e) {
+            throw new RuntimeException("Could not read profile picture image from provided file");
+        }
     }
+
+    @Override
+    public void deleteUser(Long userId) {
+        userRepository.findById(userId).orElseThrow(() ->
+                new ResourceNotFoundException("User does not exist with the given id: " + userId));
+
+        try {
+            String fileName = getProfileImageName(userId);
+            Path filePath = this.PROFILE_PICTURE_DIRECTORY.resolve(fileName).normalize();
+            Files.deleteIfExists(filePath);
+        } catch (IOException e) {
+            throw new RuntimeException("Error occurred in file deletion");
+        }
+
+        userRepository.deleteById(userId);
+    }
+
+    private String getProfileImageName(Long userId) {
+        return String.valueOf(userId) + "-pfp.jpg";
+    }
+
 }
