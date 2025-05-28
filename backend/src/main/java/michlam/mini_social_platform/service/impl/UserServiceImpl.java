@@ -14,6 +14,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
@@ -130,12 +133,21 @@ public class UserServiceImpl implements UserService {
         //  Convert image resolution. 400 by 400 should be good.
         // If custom pfp already exists, then just update it.
         // If
+        userRepository.findById(userId).orElseThrow(() ->
+                new ResourceNotFoundException("User does not exist with the given id: " + userId));
+
+        if (pfp.isEmpty()) {
+            throw new IllegalArgumentException("Profile picture file is empty");
+        }
+
+
+
         return;
     }
 
     @Override
     public void deleteUser(Long userId) {
-        
+
     }
 
 }
