@@ -176,5 +176,5 @@ public class UserServiceTest {
         userService.deleteUser(userId);
         Assertions.assertThrows(ResourceNotFoundException.class, () -> userService.getUser(userId));
     }
-    
+
 }
