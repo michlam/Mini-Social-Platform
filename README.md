@@ -24,3 +24,4 @@ For the first phase, I plan to use my past experiences to quickly implement user
 
 # Attributions
 - <a target="_blank" href="https://icons8.com/icon/12438/customer">Avatar</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
+- <a target="_blank" href="https://coolshap.es/">Misc</a> icon by <a target="_blank" href="https://coolshap.es/">CoolShap.es</a>
