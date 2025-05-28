@@ -106,7 +106,7 @@ public class UserController {
         }
     }
 
-    // TODO: UpdateProfilePicture REST API
+
     @PutMapping("{userId}/pfp")
     public ResponseEntity<Object> updateProfilePicture(
             @PathVariable Long userId,

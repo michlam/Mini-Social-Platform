@@ -162,7 +162,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUser(Long userId) {
+        userRepository.findById(userId).orElseThrow(() ->
+                new ResourceNotFoundException("User does not exist with the given id: " + userId));
 
+        try {
+            String fileName = getProfileImageName(userId);
+            Path filePath = this.PROFILE_PICTURE_DIRECTORY.resolve(fileName).normalize();
+            Files.deleteIfExists(filePath);
+        } catch (IOException e) {
+            throw new RuntimeException("Error occurred in file deletion");
+        }
+
+        userRepository.deleteById(userId);
     }
 
     private String getProfileImageName(Long userId) {

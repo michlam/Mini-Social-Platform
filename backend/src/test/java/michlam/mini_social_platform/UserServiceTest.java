@@ -163,14 +163,6 @@ public class UserServiceTest {
         Assertions.assertThrows(ResourceNotFoundException.class, () -> userService.getProfilePicture(-1L));
     }
 
-    // TODO:
-    @Test
-    void testUpdateProfilePicture_Success() {
-//        UserDto userDto = new UserDto();
-//        userDto.setUsername("test.user.1");
-//        userDto.setPassword("1234");
-//        Long userId = userService.createUser(userDto).getId();
-    }
 
 
 
