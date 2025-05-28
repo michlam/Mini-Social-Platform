@@ -99,10 +99,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Resource getProfilePicture(Long userId) {
-        // Check the images folder.
-        // If userId-pfp.jpg exists, return that.
-        // If not, return default-pfp.jpg for now.
-        // Accept both jpg and png. Convert to jpg server side and get optimized resolutions.
         userRepository.findById(userId).orElseThrow(() ->
                 new ResourceNotFoundException("User does not exist with the given id: " + userId));
 
@@ -136,4 +132,10 @@ public class UserServiceImpl implements UserService {
         // If
         return;
     }
+
+    @Override
+    public void deleteUser(Long userId) {
+        
+    }
+
 }

@@ -16,4 +16,6 @@ public interface UserService {
     Resource getProfilePicture(Long userId);
     void updateProfilePicture(Long userId, MultipartFile pfp);
 
+    // Utility function for internal use and testing
+    void deleteUser(Long userId);
 }
