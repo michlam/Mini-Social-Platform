@@ -8,6 +8,8 @@ import michlam.mini_social_platform.exception.ResourceNotFoundException;
 import michlam.mini_social_platform.mapper.Mapper;
 import michlam.mini_social_platform.respository.UserRepository;
 import michlam.mini_social_platform.service.UserService;
+import net.coobird.thumbnailator.Thumbnails;
+import net.coobird.thumbnailator.geometry.Positions;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -106,7 +108,7 @@ public class UserServiceImpl implements UserService {
                 new ResourceNotFoundException("User does not exist with the given id: " + userId));
 
         try {
-            String fileName = String.valueOf(userId) + "-pfp.jpg";
+            String fileName = getProfileImageName(userId);
             Path filePath = this.PROFILE_PICTURE_DIRECTORY.resolve(fileName).normalize();
             Resource resource = new UrlResource(filePath.toUri());
 
@@ -127,27 +129,49 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updateProfilePicture(Long userId, MultipartFile pfp) {
-        // Check if userId exists
-        // Do we need to do some preprocessing?
-        //  Convert image to JPEG.
-        //  Convert image resolution. 400 by 400 should be good.
-        // If custom pfp already exists, then just update it.
-        // If
+        final int PFP_SIZE = 400;
+        final float JPEG_QUALITY = 1.0f;
+
         userRepository.findById(userId).orElseThrow(() ->
                 new ResourceNotFoundException("User does not exist with the given id: " + userId));
 
-        if (pfp.isEmpty()) {
-            throw new IllegalArgumentException("Profile picture file is empty");
+        if (pfp.isEmpty()) throw new IllegalArgumentException("Profile picture file is empty");
+
+        try {
+            BufferedImage originalImage = ImageIO.read(new ByteArrayInputStream(pfp.getBytes()));
+            String fileName = getProfileImageName(userId);
+            Path filePath = this.PROFILE_PICTURE_DIRECTORY.resolve(fileName).normalize();
+            int squareSize = Math.min(originalImage.getWidth(), originalImage.getHeight());
+
+            Thumbnails.of(originalImage)
+                    .crop(Positions.CENTER)
+                    .size(squareSize, squareSize)
+                    .toFile(filePath.toFile());
+
+            Thumbnails.of(filePath.toFile())
+                    .size(PFP_SIZE, PFP_SIZE)
+                    .outputFormat("jpg")
+                    .outputQuality(JPEG_QUALITY)
+                    .toFile(filePath.toFile());
+
+        } catch (IOException e) {
+            throw new RuntimeException("Could not read profile picture image from provided file");
         }
-
-
-
-        return;
     }
+
+    // Do we need to do some preprocessing?
+    //  Convert image to JPEG.
+    //  Convert image resolution. 400 by 400 should be good.
+    // If custom pfp already exists, then just update it.
+
 
     @Override
     public void deleteUser(Long userId) {
 
+    }
+
+    private String getProfileImageName(Long userId) {
+        return String.valueOf(userId) + "-pfp.jpg";
     }
 
 }
